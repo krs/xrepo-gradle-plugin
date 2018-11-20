@@ -1,0 +1,24 @@
+plugins {
+  id 'java'
+  id 'com.github.krs.xrepo'
+}
+
+group 'testgroup'
+version '1.0.0'
+
+project.afterEvaluate {
+  jar.doFirst {
+    baseName = 'test-lib'
+    manifest {
+      attributes(
+        "Class-Path": configurations.${CONFIGURATION}.collect { it.getName() }.join(' ')
+      )
+    }
+  }
+}
+
+repositories {
+  maven {
+    url 'file://${REPOSITORY_DIR}'
+  }
+}

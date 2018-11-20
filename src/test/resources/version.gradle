@@ -1,0 +1,10 @@
+plugins {
+    id 'java'
+    id 'com.github.krs.xrepo'
+}
+group 'test-group'
+version '1.0.0'
+
+jar {
+    baseName = 'test-lib'
+}
