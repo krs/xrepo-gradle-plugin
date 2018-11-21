@@ -1,15 +1,47 @@
-# xrepo-gradle-plugin
+[![Build Status](https://travis-ci.com/krs/xrepo-gradle-plugin.svg?branch=master)](https://travis-ci.com/krs/xrepo-gradle-plugin)
+[![Coverage Status](https://coveralls.io/repos/github/krs/xrepo-gradle-plugin/badge.svg?branch=master)](https://coveralls.io/github/krs/xrepo-gradle-plugin?branch=master)
+
+# Cross-repository dependencies Gradle plugin
 Cross-repository Gradle plugin modifies dependency resolution to use artifacts that were built from the same branch even if they're in different repository.
 
-The plugin makes it easy to have a team working on the same set of shared repositories - artifacts built from one person's feature branch will not collide with artifacts built from other branches. In addition dependencies built from other repositories will be used if they have matching branch name. 
+The plugin makes it easy to have a team working simultaneously on features that span a set of shared repositories - artifacts built from one person's feature branch will not collide with artifacts built from other branches. In addition dependencies built from other repositories will be used if they have matching branch name. 
 
 The idea on how to solve the problem was taken from this Peter Niederwieser's answer in [this StackOverflow question](https://stackoverflow.com/questions/22779806/pick-version-with-branchname-as-classifier-with-gradle) 
 
-## Usage
+## Behaviour
 
 The plugin changes project version to suffix current branch name (version `1.0.0` becomes `1.0.0-develop` when built from branch `develop` or `1.0.0-feature-something` when build from `feature/something`.
 
 The plugin operates on configurations added by `java` plugin. When building from a branch all dependencies from the same group as current project will be checked whether they have version with the same suffix. If such version exists it will be used, if it doesn't exist a fallback version will be used (if configured). If fallback is not configured then originally requested version will be used.
+
+## Usage
+
+For Gradle 2.1 and later:
+
+```
+plugins {
+  id "com.github.krs.xrepo" version "1.0.0"
+}
+```
+
+For older Gradle versions or where dynamic configuration is required:
+
+```
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.github.krs.xrepo-gradle-plugin:xrepo-gradle-plugin:1.0.0"
+  }
+}
+
+apply plugin: "com.github.krs.xrepo"
+```
+
+## Configuration
 
 #### xrepo.enabled(boolean value)
 Used to enable the plugin. It may not be very useful to have modified version on developer's local machine so this can be used to enable it only on Continuous Integration server (for example by checking that environment variable is set).
@@ -32,12 +64,14 @@ Even when plugin is enabled you can mark certain branches to not change artifact
 xrepo.disabledBranches 'master', 'release/~'
 ```
 
-#### xrepo.fallback(String branchPattern, Strng fallback)
+#### xrepo.fallback(String branchPattern, String fallback)
 This can be used to configure which branch version should be used for dependencies in case they don't have a version identical to current branch.
 
-* The first parameter is a pattern that will be matched to current branch (use tilde `~` to match zero or more characters).
+The first parameter is a pattern that will be matched to current branch (use tilde `~` to match zero or more characters).
 
-* The second parameter is a branch name that will be used as fallback (use `[1]` to use characters matched by first tilde in fallback pattern). Order in which fallbacks are defined is important - first found match returns the fallback. If there is no match then dependency will use version defined in build script.
+The second parameter is a branch name that will be used as fallback (use `[1]` to use characters matched by first tilde in fallback pattern). Order in which fallbacks are defined is important - first found match returns the fallback. If there is no match then dependency will use version defined in build script.
+
+##### Example
 
 ```
 xrepo.fallback 'hotfix/~', ''
@@ -56,4 +90,8 @@ xrepo.fallback '~', 'develop'
 
 ## Notes
 
-* The plugin will produce a lot of branch specific artifacts, the repository that stores them should have some kind of cleanup policy implemented.
+* The plugin will produce a lot of branch specific artifacts. Please remember to implement some kind of cleanup policy for the repository that stores them. 
+
+## Contributions
+
+Fell free to raise issues or send Pull Requests.

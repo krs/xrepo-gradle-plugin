@@ -1,9 +1,12 @@
+plugins {
+  id 'java-gradle-plugin'
+  id 'eclipse'
+  id 'jacoco'
+  id 'com.gradle.plugin-publish' version '0.10.0'
+  id 'com.github.kt3k.coveralls' version '2.6.3'	
+}
 group 'com.github.krs.xrepo-gradle-plugin'
 version '1.0.0'
-
-apply plugin: 'java-gradle-plugin'
-apply plugin: 'eclipse'
-apply plugin: 'maven'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
@@ -57,4 +60,25 @@ tasks.withType(Test) {
         showExceptions true
         showStackTraces true
     }
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled = true
+		html.enabled = true
+	}
+}
+
+pluginBundle {
+  website = 'https://github.com/krs/xrepo-gradle-plugin'
+  vcsUrl = 'https://github.com/krs/xrepo-gradle-plugin'
+  description = "Cross-repository Gradle plugin modifies dependency resolution to use artifacts built from the same branch even if they're in different repository."
+  tags = ['git', 'versioning', 'branches']
+
+  plugins {
+    xrepo {
+      id = 'com.github.krs.xrepo'
+      displayName = 'Cross-repository Gradle plugin'
+    }
+  }
 }
