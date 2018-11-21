@@ -38,7 +38,7 @@ public class XRepoPluginVersionOverwriteTest {
 
     @Test
     public void versionIsNotSuffixesWhenPluginEnabledButCurrentBranchDisabled() throws Exception {
-        expectVersionForBuildFile("", "xrepo.enabled true", "xrepo.currentBranch 'one'", "xrepo.disabledBranches 'one', 'two'");
+        expectVersionForBuildFile("", "xrepo.enabled true", "xrepo.currentBranch 'one'", "xrepo.disabledBranches 'o~e', 'two'");
     }
 
     @Test

@@ -1,16 +1,13 @@
 package com.github.krs.xrepo;
 
+import com.github.krs.xrepo.action.DisabledBranches;
 import com.github.krs.xrepo.action.FallbackBranches;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class XRepoConfiguration {
     private boolean enabled = false;
     private String currentBranch = "";
     private String versionSuffix = "";
-    private Set<String> disabledBranches = new HashSet<>();
+    private DisabledBranches disabledBranches = new DisabledBranches();
     private FallbackBranches fallbacks = new FallbackBranches();
 
     public void enabled(final boolean enabled) {
@@ -23,10 +20,7 @@ public class XRepoConfiguration {
     }
 
     public void disabledBranches(final String... branches) {
-        if (isEmpty(branches)) {
-            return;
-        }
-        disabledBranches.addAll(Arrays.asList(branches));
+        disabledBranches.add(branches);
     }
 
     public void fallback(final String branchPattern, final String fallbackPattern) {
@@ -50,14 +44,11 @@ public class XRepoConfiguration {
     }
 
     private boolean currentBranchIsDisabled() {
-        return disabledBranches.contains(currentBranch);
+        return disabledBranches.isDisabled(currentBranch);
     }
 
     private static String toVersionSuffix(final String name) {
         return "-" + name.replaceAll("/", "-");
     }
 
-    private static <T> boolean isEmpty(final T[] array) {
-        return array == null || array.length == 0;
-    }
 }

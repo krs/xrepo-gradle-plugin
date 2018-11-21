@@ -67,7 +67,7 @@ public class XRepoPluginDependencyOverwriteTest {
     public void dependenciesAreNotSuffixedWhenPluginEnabledButCurrentBranchDisabled() throws Exception {
         final BuildResult result = runner
                 .withLines("xrepo.enabled true", "xrepo.currentBranch 'develop'")
-                .withLines("xrepo.disabledBranches 'develop'")
+                .withLines("xrepo.disabledBranches '~e~'")
                 .withDependency("compile", "testgroup:test-dep:1.0.0")
                 .build();
 

@@ -25,11 +25,11 @@ Used to set current branch name. Usually CI server will be able to inject it via
 xrepo.currentBranch System.getenv('GIT_BRANCH')
 ```
 
-#### xrepo.disabledBranches(String... names)
-Even when plugin is enabled you can mark certain branches to not change artifact version (for example when building from `master` in [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
+#### xrepo.disabledBranches(String... patterns)
+Even when plugin is enabled you can mark certain branches to not change artifact version (for example when building from `master` in [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)). Tilde `~` may be used to match zero or more characters.
 
 ```
-xrepo.disabledBranches 'master'
+xrepo.disabledBranches 'master', 'release/~'
 ```
 
 #### xrepo.fallback(String branchPattern, Strng fallback)
