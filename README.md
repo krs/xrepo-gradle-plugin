@@ -2,17 +2,17 @@
 [![Coverage Status](https://coveralls.io/repos/github/krs/xrepo-gradle-plugin/badge.svg?branch=master)](https://coveralls.io/github/krs/xrepo-gradle-plugin?branch=master)
 
 # Cross-repository dependencies Gradle plugin
-Cross-repository Gradle plugin modifies dependency resolution to use artifacts that were built from the same branch even if they're in different repository.
+Cross-repository Gradle plugin modifies dependency resolution to use artifacts that were built from matching branch even if they're in different repositories.
 
-The plugin makes it easy to have a team working simultaneously on features that span a set of shared repositories - artifacts built from one person's feature branch will not collide with artifacts built from other branches. In addition dependencies built from other repositories will be used if they have matching branch name. 
+The plugin makes it easy to have a team working simultaneously on features that span a set of shared repositories - artifacts built from one person's feature branch will not collide with artifacts built from other branches. In addition dependencies built from other repositories will be used if they have a matching branch name. 
 
-The idea on how to solve the problem was taken from this Peter Niederwieser's answer in [this StackOverflow question](https://stackoverflow.com/questions/22779806/pick-version-with-branchname-as-classifier-with-gradle) 
+The idea on how to solve the problem was taken from Peter Niederwieser's answer in [this StackOverflow question](https://stackoverflow.com/questions/22779806/pick-version-with-branchname-as-classifier-with-gradle) 
 
 ## Behaviour
 
 The plugin changes project version to suffix current branch name (version `1.0.0` becomes `1.0.0-develop` when built from branch `develop` or `1.0.0-feature-something` when build from `feature/something`.
 
-The plugin operates on configurations added by `java` plugin. When building from a branch all dependencies from the same group as current project will be checked whether they have version with the same suffix. If such version exists it will be used, if it doesn't exist a fallback version will be used (if configured). If fallback is not configured then originally requested version will be used.
+The plugin operates on configurations added by `java` plugin. When building from a branch all dependencies from the same group as current project will be checked whether they have a version with matching suffix. If such a version exists it will be used, if it doesn't exist a fallback version will be used (if configured). If fallback is not configured then originally requested version will be used.
 
 ## Usage
 
@@ -81,11 +81,11 @@ xrepo.fallback '~', 'develop'
 ```
 * The example above will configure fallbacks for Gitflow - when building branch `feature/example` all dependencies (within the same project group) will be checked if they also have `feature/example` version build. If there is no such version for a dependency then `develop` version will be used due to "capture-all" pattern `~` at the end.
 
-* On the other hand `hotfix/example` assumes that it will be branched from `master` (and merged back to it), so all dependencies will also be taken from master if there they don't have `hotfix/example` version. Please note that there is a difference between having `xrepo.disabledBraches 'master'` and `xrepo.fallback 'mater', ''` - the second will still suffix version of current build (and use dependencies with the same suffix).
+* On the other hand `hotfix/example` assumes that it will be branched from `master` (and merged back to it), so all dependencies will also be taken from master if  they don't have `hotfix/example` version. Please note that there is a difference between having `xrepo.disabledBraches 'master'` and `xrepo.fallback 'mater', ''` - the second will still suffix version of current build (and use dependencies with the same suffix).
 
-* Sub-feature branch example demonstrates how the plugin may be used when team works on a big change that is not merged to develop. First a "sink branch" for such feature is created `feature/big`, then each team member may start working on a part of in their own (sub)feature branches `subfeature/big/change-one`, `subfeature/big/change-two`, etc. Dependencies for artifacts build from each (sub)feature branch will fallback to `feature/big` branch version.
+* Sub-feature branch example demonstrates how the plugin may be used when team works on a big change that is not merged to `develop`. First a "sink branch" for such feature is created `feature/big`, then each team member may start working on a part of in their own (sub)feature branches `subfeature/big/change-one`, `subfeature/big/change-two`, etc. Dependencies for artifacts build from each (sub)feature branch will fallback to `feature/big` branch version.
 
-* Release fallback example show how to enforce building all artifacts in correct order - all dependencies must be be build from the same release branch before current artifact can be built. Fallback points to the same branch that has already been checked and not found, this will cause the build to fail. 
+* Release fallback example shows how to enforce building all artifacts in correct order - all dependencies must be be build from the same release branch before current artifact can be built. Fallback points to the same branch that has already been checked and not found, this will cause the build to fail. 
 
 
 ## Notes
